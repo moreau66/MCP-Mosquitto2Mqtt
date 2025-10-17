@@ -6,7 +6,7 @@
     "description": "Broker MQTT Eclipse Mosquitto - Cœur de communication NeurHomeIA pour la messagerie temps réel entre microservices",
     "author": "moreau66",
     "category": "core",
-    "tags": ["mqtt", "broker", "core", "messaging", "eclipse"],
+    "tags": ["core", "broker", "mqtt", "core", "messaging", "eclipse"],
     "icon": "Radio"
   },
   "container": {
