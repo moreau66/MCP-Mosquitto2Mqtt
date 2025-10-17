@@ -1,0 +1,97 @@
+{
+  "metadata": {
+    "id": "mosquitto2mqtt",
+    "name": "Mosquitto MQTT Broker",
+    "version": "2.0.18",
+    "description": "Broker MQTT Eclipse Mosquitto - Cœur de communication NeurHomeIA pour la messagerie temps réel entre microservices",
+    "author": "moreau66",
+    "category": "core",
+    "tags": ["mqtt", "broker", "core", "messaging", "eclipse"],
+    "icon": "Radio"
+  },
+  "container": {
+    "image": "eclipse-mosquitto",
+    "defaultVersion": "latest",
+    "autoStart": true,
+    "ports": [
+      {
+        "container": 1883,
+        "host": 1883,
+        "protocol": "tcp",
+        "description": "Port MQTT standard"
+      },
+      {
+        "container": 9001,
+        "host": 9001,
+        "protocol": "tcp",
+        "description": "Port WebSocket MQTT"
+      }
+    ],
+    "volumes": [
+      {
+        "container": "/mosquitto/config",
+        "host": "./mosquitto/config",
+        "mode": "rw",
+        "description": "Fichiers de configuration Mosquitto"
+      },
+      {
+        "container": "/mosquitto/data",
+        "host": "./mosquitto/data",
+        "mode": "rw",
+        "description": "Données persistantes du broker"
+      },
+      {
+        "container": "/mosquitto/log",
+        "host": "./mosquitto/log",
+        "mode": "rw",
+        "description": "Logs du broker MQTT"
+      }
+    ],
+    "environment": [],
+    "restart": "always",
+    "labels": {
+      "discovery.type": "mqtt-broker",
+      "discovery.core": "true",
+      "neurohomeia.service": "core.messaging"
+    },
+    "healthcheck": {
+      "test": ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "test", "-m", "ping", "-q", "0"],
+      "interval": "30s",
+      "timeout": "10s",
+      "retries": 3,
+      "start_period": "10s"
+    }
+  },
+  "mcp": {
+    "service_id": "mosquitto",
+    "topics": {
+      "discovery": "mcp/services/mosquitto/discovery",
+      "status": "$SYS/broker/clients/connected",
+      "commands": "mosquitto/commands/#"
+    },
+    "schemas": {
+      "mcp": "https://github.com/moreau66/MCP-Mosquitto2Mqtt/blob/main/schemas/mcp-schema.json",
+      "tools": "https://github.com/moreau66/MCP-Mosquitto2Mqtt/blob/main/schemas/mcp-tools-schema.json",
+      "resources": "https://github.com/moreau66/MCP-Mosquitto2Mqtt/blob/main/schemas/mcp-resources-schema.json"
+    }
+  },
+  "ui_component": {
+    "component_path": "MosquittoContainer",
+    "mode": "embedded"
+  },
+  "docker_compose": {
+    "depends_on": [],
+    "networks": ["smart-home-network"],
+    "profiles": ["core", "required"]
+  },
+  "dependencies": {
+    "required": [],
+    "optional": []
+  },
+  "documentation": {
+    "readme_url": "https://github.com/moreau66/MCP-Mosquitto2Mqtt/blob/main/README.md",
+    "github_url": "https://github.com/moreau66/MCP-Mosquitto2Mqtt",
+    "docker_hub_url": "https://hub.docker.com/_/eclipse-mosquitto",
+    "mcp_spec_url": "https://github.com/moreau66/MCP-Mosquitto2Mqtt/blob/main/docs/MCP_SPEC.md"
+  }
+}
